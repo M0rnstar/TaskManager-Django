@@ -1,8 +1,9 @@
-
+import Form from "../components/Form"
+import '../src/index.css'
 
 function Register() {
   return (
-    <div>Register</div>
+    <Form route="/api/user/register/" method="register"/>
   )
 }
 
