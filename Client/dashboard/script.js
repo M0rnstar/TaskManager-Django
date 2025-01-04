@@ -4,6 +4,24 @@ if (!token) {
   window.location.href = "../auth/login.html";
 }
 
+// Функция для генерации HTML карточки
+function createCardHTML(title, deadline) {
+  return `
+    <div class="card__content">
+      <div class="card__main">
+        <div class="card__left">
+          <input type="checkbox" class="checkbox" />
+        </div>
+        <div class="card__right">
+          <div class="card__deadline">До ${deadline}</div>
+          <div class="card__title">${title}</div>
+        </div>
+      </div>
+      <div class="card__close">&times;</div>
+    </div>
+  `;
+}
+
 document.querySelectorAll(".nav-item").forEach((item) => {
   item.addEventListener("click", function () {
     // Убираем активный класс со всех элементов
@@ -51,18 +69,103 @@ function clearModalFields() {
   document.getElementById("modalDeadline").value = ""; // Очищаем поле дедлайна
 }
 
+// Функция для отображения задачи на странице
+function displayTask(task) {
+  const newCard = document.createElement("div");
+  newCard.classList.add("card");
+
+  // Сохраняем ID задачи в data-id
+  newCard.dataset.id = task.id; // Предположим, что task содержит поле id
+  newCard.dataset.title = task.title;
+  newCard.dataset.content = task.content;
+  newCard.dataset.deadline = task.deadline;
+
+  newCard.innerHTML = createCardHTML(task.title, task.deadline);
+
+  // Добавляем карточку в контейнер
+  cardsContainer.appendChild(newCard);
+
+  const closeButton = newCard.querySelector(".card__close");
+
+  // Обработка события клика на крестик (если нужно удаление)
+  closeButton.addEventListener("click", function () {
+    const cardId = newCard.dataset.id; // Теперь получаем правильный ID
+
+    if (cardId) {
+      // Отправляем DELETE-запрос на сервер для удаления задачи
+      fetch(`/api/delete-task/${cardId}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            newCard.remove(); // Удаляем карточку с фронтенда
+          } else {
+            console.error("Ошибка при удалении задачи");
+            console.log(`Attempting to delete task with ID: ${cardId}`);
+          }
+        })
+        .catch((error) => console.error("Ошибка:", error));
+    } else {
+      console.error("Ошибка: ID задачи не найден");
+    }
+  });
+
+  // Обработчик для открытия модального окна при клике на карточку
+  newCard.querySelector(".card__right").onclick = function () {
+    modal.style.display = "block";
+    document.getElementById("modalTitle").value = newCard.dataset.title;
+    document.getElementById("modalContent").value = newCard.dataset.content;
+    document.getElementById("modalDeadline").value = newCard.dataset.deadline;
+    editingCard = newCard;
+  };
+}
+
+// Загружаем задачи с сервера при загрузке страницы
+window.onload = function () {
+  fetch("/api/get-tasks") // Отправляем GET-запрос
+    .then((response) => response.json()) // Преобразуем ответ в JSON
+    .then((tasks) => {
+      tasks.forEach((task) => {
+        displayTask(task); // Отображаем каждую задачу
+      });
+    })
+    .catch((error) => console.error("Ошибка при загрузке задач:", error));
+};
+
 submitBtn.onclick = function () {
   const title = document.getElementById("modalTitle").value;
   const content = document.getElementById("modalContent").value;
   const deadline = document.getElementById("modalDeadline").value; // Получаем дедлайн
 
   if (editingCard) {
+    const cardId = editingCard.dataset.id; // Получаем ID карточки
+
     // Обновляем title, content и deadline
     editingCard.querySelector(".card__title").textContent = title;
     editingCard.querySelector(".card__deadline").textContent = `До ${deadline}`;
     editingCard.dataset.title = title;
     editingCard.dataset.content = content;
     editingCard.dataset.deadline = deadline; // Обновляем dataset дедлайна
+    const updatedTaskData = {
+      title: title,
+      content: content,
+      deadline: deadline,
+    };
+
+    fetch(`/api/update-task/${cardId}`, {
+      method: "PUT", // Используем метод PUT для обновления
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedTaskData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.message) {
+          console.log(data.message); // Логируем сообщение об обновлении задачи
+        }
+      })
+      .catch((error) => console.error("Ошибка:", error));
     editingCard = null; // Сбрасываем editingCard после обновления
   } else {
     // Создаём новую карточку
@@ -76,28 +179,29 @@ submitBtn.onclick = function () {
     newCard.dataset.content = content;
     newCard.dataset.deadline = deadline; // Сохраняем дедлайн
 
-    newCard.innerHTML = `
-        <div class="card__content">
-        <div class="card__main">
-          <div class="card__left">
-            <input type="checkbox" class="checkbox" />
-          </div>
-          <div class="card__right">
-            <div class="card__deadline">До ${deadline}</div>
-            <div class="card__title">${title}</div>
-          </div>
-          </div>
-          <div class="card__close">&times;</div>
-        </div>
-    `;
+    newCard.innerHTML = createCardHTML(title, deadline);
 
     // Добавляем карточку в контейнер
     cardsContainer.appendChild(newCard);
     const closeButton = newCard.querySelector(".card__close");
 
-    // Обработка события клика на крестик (если нужно удаление)
+    // Обработка события клика на крестик
     closeButton.addEventListener("click", function () {
-      newCard.remove(); // Удаляем карточку при нажатии на крестик
+      const cardId = newCard.dataset.id; // Предположим, что у карточки есть уникальный ID
+
+      // Отправляем DELETE-запрос на сервер для удаления задачи
+      fetch(`/api/delete-task/${cardId}`, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (response.ok) {
+            // Если запрос успешный, удаляем карточку с фронтенда
+            newCard.remove();
+          } else {
+            console.error("Ошибка при удалении задачи");
+          }
+        })
+        .catch((error) => console.error("Ошибка:", error));
     });
 
     // Обработчик только для card__right
@@ -152,7 +256,7 @@ username.addEventListener("click", function () {
   }
 });
 
-//Закрываем шторку, если клик был вне меню
+// Закрываем шторку, если клик был вне меню
 window.addEventListener("click", function (event) {
   if (
     !event.target.closest("#username") &&
@@ -160,9 +264,4 @@ window.addEventListener("click", function (event) {
   ) {
     dropdownMenu.style.display = "none";
   }
-});
-
-document.querySelector(".logout-button").addEventListener("click", () => {
-  localStorage.clear(); // Удаляем токен и данные пользователя
-  window.location.href = "../auth/login.html"; // Перенаправляем на страницу входа
 });
