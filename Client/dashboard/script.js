@@ -3,7 +3,6 @@ if (!token) {
   // Если токена нет, перенаправляем на страницу авторизации
   window.location.href = "../auth/login.html";
 }
-
 // Функция для генерации HTML карточки
 function createCardHTML(title, deadline) {
   return `
@@ -264,4 +263,9 @@ window.addEventListener("click", function (event) {
   ) {
     dropdownMenu.style.display = "none";
   }
+});
+
+document.querySelector(".logout-button").addEventListener("click", () => {
+  localStorage.clear(); // Удаляем токен и данные пользователя
+  window.location.href = "../auth/login.html"; // Перенаправляем на страницу входа
 });
