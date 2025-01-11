@@ -13,7 +13,9 @@ class UserSerialzer(serializers.ModelSerializer):
         return user
     
 class TaskSerializer(serializers.ModelSerializer):
+    deadline = serializers.DateTimeField(format="%d.%m.%Y") # type: ignore
+
     class Meta:
         model = Task
-        fiels = ["id", "title", "description", "created_at", "user", "deadline"]
+        fields = ["id", "title", "content", "created_at", "user", "deadline"]
         extra_kwargs = {"user": {"read_only": True}}
