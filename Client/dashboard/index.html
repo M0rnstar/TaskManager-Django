@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Main page</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <div class="header__left">
+          <div class="logo">
+            <img src="img/logo.svg" alt="logo" />
+          </div>
+          <div class="header__title">Task Management System</div>
+        </div>
+        <div class="header__center">
+          <div class="add-task" id="addTask">Добавить задачу</div>
+          <div class="header__navbar">
+            <ul class="navbar">
+              <li class="nav-item">В процессе</li>
+              <li class="nav-item">Просроченные</li>
+              <li class="nav-item">Завершённые</li>
+            </ul>
+          </div>
+        </div>
+        <div class="header__right">
+          <div class="username" id="username">Morningstar</div>
+          <div class="dropdown" id="dropdownMenu">
+            <ul>
+              <li>Профиль</li>
+              <li>Настройки</li>
+              <li class="logout-button">Выйти</li>
+            </ul>
+          </div>
+          <div>
+            <img src="img/kitten.jpg" alt="img" class="avatar" />
+          </div>
+        </div>
+      </header>
+      <main>
+        <div class="cards"></div>
+        <div class="task-modal" id="taskModal">
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <label for="modalTitle">Название:</label>
+            <input
+              type="text"
+              id="modalTitle"
+              placeholder="Введите название"
+              style="width: 100%; margin-bottom: 10px"
+            />
+            <label for="modalContent">Текст:</label>
+            <textarea
+              id="modalContent"
+              rows="4"
+              placeholder="Введите содержание"
+              style="width: 100%; resize: none"
+            ></textarea>
+            <label for="modalDeadline">Дедлайн:</label>
+            <input
+              type="date"
+              id="modalDeadline"
+              style="width: 100%; margin-bottom: 10px"
+            />
+            <button id="submitModal">Сохранить</button>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
