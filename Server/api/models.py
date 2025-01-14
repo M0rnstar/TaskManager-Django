@@ -7,3 +7,4 @@ class Task(models.Model):
     deadline = models.DateTimeField(null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
+    is_completed = models.BooleanField(default=False)
