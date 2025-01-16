@@ -297,6 +297,32 @@ function handleSaveTask() {
   }
 }
 
+// Функция для загрузки никнейма
+
+function loadUserName() {
+  fetch("http://127.0.0.1:8000/api/user/profile", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Ошибка при загрузке имени пользователя");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      const usernameElement = document.getElementById("username");
+      if (usernameElement) {
+        usernameElement.textContent = data.username;
+      }
+    })
+    .catch((err) => {
+      console.error("Ошибка при загрузке профиля пользователя:", err);
+    });
+}
+
 // ---------------------
 // РАБОТА С МОДАЛКОЙ
 // ---------------------
@@ -376,6 +402,7 @@ window.addEventListener("DOMContentLoaded", () => {
     window.location.href = "../auth/login.html";
     return;
   }
-  // Загружаем задачи при старте
+  // Загружаем задачи и никнейм при старте
+  loadUserName();
   loadTasks();
 });
