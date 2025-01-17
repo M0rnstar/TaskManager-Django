@@ -41,6 +41,43 @@ body {
   align-items: center;
 }
 
+.header__right {
+  display: block;
+  width: 260px;
+
+}
+
+.header__navbar {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* Общий контейнер для никнейма и аватарки */
+.user-container {
+  display: flex;
+  align-items: center; /* Выравниваем никнейм и аватарку по вертикали */
+  position: relative; /* Контекст для абсолютного позиционирования меню */
+  justify-content: flex-end;
+  gap: 10px; /* Расстояние между никнеймом и аватаркой */
+  padding: 5px;
+  cursor: pointer;
+  padding-left: 10px;
+  box-sizing: border-box;
+  border: 1.17px solid rgba(170, 171, 173, 0.03);
+  border-radius: 8.23px;
+  box-shadow: 0px 0px 14.09px 0px rgba(160, 163, 171, 0.26);
+  background: rgb(255, 255, 255);
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column; /* Никнейм и email в столбик */
+  text-align: right; /* Текст выравнивается вправо */
+}
+
 .add-task {
   color: rgb(17, 24, 39);
   font-size: 16px;
@@ -53,11 +90,16 @@ body {
   transition: background-color 0.3s;
 }
 
-.header__navbar {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 400;
+.avatar {
+  border-radius: 50px;
+  width: 35px;
+  height: 35px;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%; /* Делаем аватарку круглой */
 }
 
 .navbar {
@@ -79,40 +121,42 @@ body {
   color: white;
 }
 
-.header__right {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding-right: 20px;
-}
-
 .username {
   font-size: 18px;
   font-weight: 400;
-  cursor: pointer;
 }
 
+.email {
+  font-size: 13px;
+  color: gray;
+}
+
+/* Выпадающее меню */
 .dropdown {
-  display: none;
-  position: absolute;
-  top: 75px;
+  display: none; /* Скрыто по умолчанию */
+  position: absolute; /* Абсолютное позиционирование */
+  width: 260px; /* Фиксированная ширина меню */
+  z-index: 1000; /* Чтобы меню было выше других элементов */
   background-color: white;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
   border-radius: 8px;
-  padding: 10px;
-  z-index: 1000;
+  margin-top: 2px;
 }
 
+/* Пункты меню */
 .dropdown ul {
-  list-style: none;
+  list-style: none; /* Убираем маркеры списка */
   margin: 0;
   padding: 0;
 }
 
 .dropdown ul li {
-  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end; /* Текст слева, иконка справа */
+  padding: 10px 16px;
   cursor: pointer;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgb(190, 190, 190);;
 }
 
 .dropdown ul li:last-child {
@@ -123,10 +167,16 @@ body {
   background-color: #f0f0f0;
 }
 
-.avatar {
-  border-radius: 50px;
-  width: 35px;
-  height: 35px;
+/* Стили для иконок */
+.menu-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px; /* Отступ между текстом и иконкой */
+}
+
+/* Показываем меню при наведении */
+.user-container:hover .dropdown {
+  display: block;
 }
 
 .cards {
@@ -212,7 +262,7 @@ body {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background: rgb(249, 250, 251);
+  background: rgba(249, 250, 251, 0.671);
 }
 
 .modal-content {
