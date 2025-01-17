@@ -26,15 +26,30 @@
           </div>
         </div>
         <div class="header__right">
-          <div class="username" id="username"></div>
+          <div class="user-container">
+            <div class="user-info">
+              <span class="username" id="username">user</span>
+              <span class="email" id="email">example@mail.ru</span>
+            </div>
+            <div class="avatar">
+              <img src="./img/kitten.jpg" alt="avatar" class="user-avatar" />
+            </div>
+          </div>
           <div class="dropdown" id="dropdownMenu">
             <ul>
-              <li>Настройки</li>
-              <li class="logout-button">Выйти</li>
+              <li>
+                настройки
+                <img
+                  src="./img/settings.svg"
+                  alt="настройки"
+                  class="menu-icon"
+                />
+              </li>
+              <li class="logout-button">
+                выход
+                <img src="./img/logout.svg" alt="выход" class="menu-icon" />
+              </li>
             </ul>
-          </div>
-          <div>
-            <img src="img/kitten.jpg" alt="img" class="avatar" />
           </div>
         </div>
       </header>
