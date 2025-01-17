@@ -299,7 +299,7 @@ function handleSaveTask() {
 
 // Функция для загрузки никнейма
 
-function loadUserName() {
+function loadUser() {
   fetch("http://127.0.0.1:8000/api/user/profile", {
     method: "GET",
     headers: {
@@ -314,8 +314,14 @@ function loadUserName() {
     })
     .then((data) => {
       const usernameElement = document.getElementById("username");
+      const emailElement = document.getElementById("email");
       if (usernameElement) {
+        console.log(data);
         usernameElement.textContent = data.username;
+      }
+      if (emailElement) {
+        console.log("Емайл найден");
+        emailElement.textContent = data.email;
       }
     })
     .catch((err) => {
@@ -403,6 +409,6 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
   // Загружаем задачи и никнейм при старте
-  loadUserName();
+  loadUser();
   loadTasks();
 });
