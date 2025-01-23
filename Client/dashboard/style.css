@@ -1,5 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Ubuntu:wght@400;500;700&display=swap");
 
+/* ------------------------------
+   БАЗОВЫЕ СТИЛИ СТРАНИЦЫ
+------------------------------ */
 body {
   background: rgb(249, 250, 251);
 }
@@ -8,14 +11,17 @@ body {
   padding: 30px;
   max-width: 1140px;
   margin: 0 auto;
-  align-items: center;
+  align-items: center; /* Иногда лучше использовать flex; зависит от макета */
 }
 
+/* ------------------------------
+   ШАПКА (HEADER)
+------------------------------ */
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: Ubuntu;
+  font-family: Ubuntu, sans-serif;
   height: 33px;
 }
 
@@ -44,40 +50,9 @@ body {
 .header__right {
   display: block;
   width: 260px;
-
 }
 
-.header__navbar {
-  display: flex;
-  align-items: center;
-  font-size: 16px;
-  font-weight: 400;
-}
-
-/* Общий контейнер для никнейма и аватарки */
-.user-container {
-  display: flex;
-  align-items: center; /* Выравниваем никнейм и аватарку по вертикали */
-  position: relative; /* Контекст для абсолютного позиционирования меню */
-  justify-content: flex-end;
-  gap: 10px; /* Расстояние между никнеймом и аватаркой */
-  padding: 5px;
-  cursor: pointer;
-  padding-left: 10px;
-  box-sizing: border-box;
-  border: 1.17px solid rgba(170, 171, 173, 0.03);
-  border-radius: 8.23px;
-  box-shadow: 0px 0px 14.09px 0px rgba(160, 163, 171, 0.26);
-  background: rgb(255, 255, 255);
-  width: 100%;
-}
-
-.user-info {
-  display: flex;
-  flex-direction: column; /* Никнейм и email в столбик */
-  text-align: right; /* Текст выравнивается вправо */
-}
-
+/* Кнопка «Добавить задачу» */
 .add-task {
   color: rgb(17, 24, 39);
   font-size: 16px;
@@ -85,21 +60,17 @@ body {
   line-height: 18px;
   text-align: left;
   cursor: pointer;
-  padding: 8px 25px; /* Добавляем padding для соответствия остальным элементам */
-  border-radius: 25px; /* Закругляем углы */
+  padding: 8px 25px;
+  border-radius: 25px;
   transition: background-color 0.3s;
 }
 
-.avatar {
-  border-radius: 50px;
-  width: 35px;
-  height: 35px;
-}
-
-.user-avatar {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%; /* Делаем аватарку круглой */
+/* Навигация (navbar) */
+.header__navbar {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 400;
 }
 
 .navbar {
@@ -107,6 +78,8 @@ body {
   gap: 5px;
   align-items: center;
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-item {
@@ -121,6 +94,32 @@ body {
   color: white;
 }
 
+/* ------------------------------
+   БЛОК АВАТАР + ИМЯ ПОЛЬЗОВАТЕЛЯ
+------------------------------ */
+.user-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 5px;
+  cursor: pointer;
+  padding-left: 10px;
+  box-sizing: border-box;
+  border: 1.17px solid rgba(170, 171, 173, 0.03);
+  border-radius: 8.23px;
+  box-shadow: 0px 0px 14.09px 0px rgba(160, 163, 171, 0.26);
+  background: rgb(255, 255, 255);
+  width: 100%;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
 .username {
   font-size: 18px;
   font-weight: 400;
@@ -131,21 +130,32 @@ body {
   color: gray;
 }
 
-/* Выпадающее меню */
+.avatar {
+  border-radius: 50px;
+  width: 35px;
+  height: 35px;
+}
+
+.user-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+
+/* Выпадающее меню (dropdown) */
 .dropdown {
-  display: none; /* Скрыто по умолчанию */
-  position: absolute; /* Абсолютное позиционирование */
-  width: 260px; /* Фиксированная ширина меню */
-  z-index: 1000; /* Чтобы меню было выше других элементов */
+  display: none;
+  position: absolute;
+  width: 260px;
+  z-index: 1000;
   background-color: white;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Тень */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   margin-top: 2px;
 }
 
-/* Пункты меню */
 .dropdown ul {
-  list-style: none; /* Убираем маркеры списка */
+  list-style: none;
   margin: 0;
   padding: 0;
 }
@@ -153,10 +163,10 @@ body {
 .dropdown ul li {
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Текст слева, иконка справа */
+  justify-content: flex-end;
   padding: 10px 16px;
   cursor: pointer;
-  border-bottom: 1px solid rgb(190, 190, 190);;
+  border-bottom: 1px solid rgb(190, 190, 190);
 }
 
 .dropdown ul li:last-child {
@@ -167,27 +177,30 @@ body {
   background-color: #f0f0f0;
 }
 
-/* Стили для иконок */
 .menu-icon {
   width: 16px;
   height: 16px;
-  margin-left: 8px; /* Отступ между текстом и иконкой */
+  margin-left: 8px;
 }
 
-/* Показываем меню при наведении */
+/* Показываем меню при hover на контейнер */
 .user-container:hover .dropdown {
   display: block;
 }
 
+/* ------------------------------
+   РАЗМЕТКА КАРТОЧЕК (TASK CARDS)
+------------------------------ */
 .cards {
   margin-top: 18px;
   max-width: 1138px;
   max-height: 901px;
-  font-family: Montserrat;
+  font-family: Montserrat, sans-serif;
   display: flex;
   flex-wrap: wrap;
   gap: 8px 34px;
 }
+
 .card {
   width: 259px;
   height: 56px;
@@ -233,7 +246,7 @@ body {
 }
 
 .card__title {
-  font-size: 12px;
+  font-size: 13px;
   color: rgb(17, 24, 39);
   font-weight: 500;
   white-space: nowrap;
@@ -253,6 +266,10 @@ body {
   opacity: 1;
 }
 
+/* ------------------------------
+   МОДАЛЬНОЕ ОКНО
+------------------------------ */
+/* Задний полупрозрачный слой */
 .task-modal {
   display: none;
   position: fixed;
@@ -265,26 +282,195 @@ body {
   background: rgba(249, 250, 251, 0.671);
 }
 
+/* Контейнер модалки (с рамкой и тенью) */
 .modal-content {
   background-color: #f9fafb;
   margin: 120px auto;
-  padding: 20px;
-  border-radius: 23px;
+  border-radius: 23px; /* Старая «рамка», как просили */
   box-shadow: 0px 0px 7px 2px rgba(0, 0, 0, 0.25);
-  width: 553px;
-  height: 295px;
-  text-align: center;
+  width: 784px;
+  height: 418px;
 }
 
+.modal-container {
+  padding: 61px 100px 61px 101px;
+}
+
+/* Шапка модалки: дата (До …) + иконки (Save, Close) */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 52px;
+}
+
+/* Блок слева: календарь + текст «До …» + скрытое поле date */
+.modal-deadline {
+  position: relative; /* для абсолютного позиционирования скрытого input */
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-sizing: border-box;
+  border: 0.95px solid rgb(17, 24, 39);
+  border-radius: 6.5px;
+  pointer-events: none;
+}
+
+/* Иконка календаря */
+.calendar-icon {
+  padding-left: 25px;
+  padding-block: 5px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+/* Текст «До 01.01.2025» */
+#deadlineText {
+  pointer-events: none; /* Клик проходит сквозь текст к input */
+  font-size: 17px;
+  font-family: Ubuntu, sans-serif;
+  font-weight: 400;
+  line-height: 20px;
+  color: rgb(17, 24, 39);
+  padding-right: 23px;
+  cursor: pointer;
+}
+
+/* Скрытый/абсолютный input для выбора даты */
+.date-input-hidden {
+  pointer-events: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 9999; /* на всякий случай, если что-то перекрывает */
+}
+
+.modal-icons {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Иконка сохранения */
+.icon-save {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* Иконка закрытия (крестик) */
 .close {
-  color: #aaa;
-  float: right;
-  font-size: 28px;
+  font-size: 40px;
+  color: #000;
+  cursor: pointer;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
+/* Основная часть модалки */
+.modal-body {
+  text-align: left;
+  box-sizing: border-box;
+  border: 1.32px solid rgb(17, 24, 39);
+  border-radius: 15.86px;
+  box-shadow: 0px 0px 6.61px 0px rgba(0, 0, 0, 0.25);
+  width: 580.37px;
+  height: 208.88px;
+}
+
+/* Единая «рамка» внутри модалки для заголовка и описания */
+.task-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 60px;
+}
+
+/* Верхняя часть рамки: заголовок + кнопки B/I/U справа */
+.task-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Поле ввода заголовка */
+.task-title {
+  width: 70%;
+  padding: 5px;
+  font-size: 15.86px;
+  box-sizing: border-box;
+  border: 1.32px solid rgb(17, 24, 39);
+  border-radius: 6.61px;
+  font-family: Ubuntu, sans-serif;
+  font-weight: 400;
+  line-height: 18px;
+}
+
+.task-title::placeholder {
   color: #000;
+}
+
+/* Кнопки форматирования (B, I, U) */
+.editor-toolbar {
+  display: flex;
+  gap: 6px;
+}
+
+.editor-toolbar button {
+  padding: 5px 10px;
+  background-color: #eee;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+}
+
+.editor-toolbar button:hover {
+  background-color: #ddd;
+}
+
+/* Поле описания (textarea) */
+.task-description {
+  width: 100%;
+  height: 100px;
+  resize: none;
+  padding: 8px;
+  font-size: 15.86px;
+  font-family: Ubuntu, sans-serif;
+  /* Если нужно меньше или больше высота, подкорректируйте */
+}
+
+/* Стили для текстового поля с 6 жирными линиями */
+textarea.task-description {
+  border: none; /* Убираем стандартную рамку */
+  background: none; /* Убираем стандартный фон */
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 22px,
+    #000 22px,
+    #000 24px
+  ); /* Линии под текстом */
+  width: 100%; /* Полная ширина контейнера */
+  resize: none; /* Убираем возможность изменения размера */
+  line-height: 20px; /* Высота строки */
+  font-family: inherit; /* Используем шрифт, заданный для всего сайта */
+  padding: 0px 0 4px 0; /* Отступ сверху, снизу */
+  outline: none; /* Убираем рамку при фокусе */
+  height: 130px; /* Высота для 6 строк */
+  font-family: Ubuntu, sans-serif;
+}
+
+textarea.task-description::placeholder {
+  color: #070000; /* Цвет текста-заполнителя */
+  font-family: Ubuntu, sans-serif;
+}
+
+textarea.task-description:focus {
+  outline: none; /* Убираем стандартную рамку фокуса */
 }
