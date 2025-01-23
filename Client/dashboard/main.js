@@ -10,9 +10,6 @@
 // БАЗОВЫЕ КОНСТАНТЫ
 // ---------------------
 const baseURL = "http://127.0.0.1:8000/api/tasks";
-// Если у вас другой адрес (например, /api/tasks/create),
-// замените в коде ниже соответствующие эндпойнты.
-
 const token = localStorage.getItem("accessToken"); // Токен из localStorage
 
 // ---------------------
@@ -26,6 +23,10 @@ const submitModalBtn = document.getElementById("submitModal");
 const modalTitleInput = document.getElementById("modalTitle");
 const modalContentInput = document.getElementById("modalContent");
 const modalDeadlineInput = document.getElementById("modalDeadline");
+const deadlineText = document.getElementById("deadlineText"); // «До …»
+const btnBold = document.querySelector(".btn-bold");
+const btnItalic = document.querySelector(".btn-italic");
+const taskDescription = document.querySelector("textarea.task-description");
 
 const cardsContainer = document.querySelector(".cards");
 
@@ -35,8 +36,32 @@ const dropdownMenu = document.getElementById("dropdownMenu");
 let editingCard = null; // Хранит ссылку на редактируемую карточку (null, если создаём новую)
 
 // ---------------------
-// ФУНКЦИИ
+// ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
 // ---------------------
+
+/**
+ * Преобразует "yyyy-mm-dd" → "dd.mm.yyyy"
+ * Если на вход пришло "", возвращаем "".
+ */
+function formatToDdMmYyyy(isoDate) {
+  if (!isoDate) return "";
+  const parts = isoDate.split("-"); // ["yyyy","mm","dd"]
+  if (parts.length !== 3) return "";
+  const [yyyy, mm, dd] = parts;
+  return `${dd}.${mm}.${yyyy}`;
+}
+
+/**
+ * Преобразует "dd.mm.yyyy" → "yyyy-mm-dd"
+ * Если на вход пришло "", возвращаем "".
+ */
+function formatToYyyyMmDd(dottedDate) {
+  if (!dottedDate) return "";
+  const parts = dottedDate.split("."); // ["dd","mm","yyyy"]
+  if (parts.length !== 3) return "";
+  const [dd, mm, yyyy] = parts;
+  return `${yyyy}-${mm}-${dd}`;
+}
 
 /**
  * Функция, возвращающая HTML для содержимого карточки.
@@ -65,12 +90,13 @@ function createCardHTML(title, deadline) {
 function clearModalFields() {
   modalTitleInput.value = "";
   modalContentInput.value = "";
-  modalDeadlineInput.value = "";
+  modalDeadlineInput.value = ""; // Сбрасываем hidden-инпут
+  deadlineText.textContent = "До ..."; // Визуальный текст
 }
 
 /**
  * Функция отрисовывает задачу в контейнере .cards.
- * Принимает объект задачи (task), содержащий:
+ * Принимает объект задачи (task):
  *  {
  *    id: number,
  *    title: string,
@@ -84,7 +110,7 @@ function displayTask(task) {
   const newCard = document.createElement("div");
   newCard.classList.add("card");
 
-  // Сохраняем данные в data-атрибутах
+  // Сохраняем данные в data-атрибутах (deadline в "dd.mm.yyyy")
   newCard.dataset.id = task.id;
   newCard.dataset.title = task.title || "";
   newCard.dataset.content = task.content || "";
@@ -98,7 +124,6 @@ function displayTask(task) {
 
   // ==== Работа с чекбоксом (is_completed) ====
   const checkbox = newCard.querySelector(".checkbox");
-  // Ставим галочку, если is_completed = true
   checkbox.checked = Boolean(task.is_completed);
 
   // При клике на чекбокс отправляем запрос на сервер, чтобы обновить is_completed
@@ -106,11 +131,10 @@ function displayTask(task) {
     const cardId = newCard.dataset.id;
     const isCompleted = checkbox.checked;
 
-    // Готовим данные для PUT (или PATCH), чтобы обновить только is_completed
     const updatedTask = { is_completed: isCompleted };
 
     fetch(`${baseURL}/${cardId}/update`, {
-      method: "PATCH", // Или PATCH, если ваш сервер поддерживает частичное обновление
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -130,11 +154,10 @@ function displayTask(task) {
           `Задача ${cardId} обновлена (is_completed=${isCompleted}).`,
           data
         );
-        rerunActiveFilter(); // <-- функция из utils.js
+        rerunActiveFilter(); // <-- функция из utils.js, если у вас есть фильтр
       })
       .catch((err) => {
         console.error("Ошибка при обновлении чекбокса:", err);
-        // Если нужно, можно откатить checkbox.checked = !isCompleted;
       });
   });
 
@@ -176,13 +199,24 @@ function displayTask(task) {
     // Заполняем поля модалки из data-атрибутов
     modalTitleInput.value = newCard.dataset.title;
     modalContentInput.value = newCard.dataset.content;
-    modalDeadlineInput.value = newCard.dataset.deadline;
+
+    // deadline хранится в "dd.mm.yyyy"
+    const ddMmYyyy = newCard.dataset.deadline;
+    if (ddMmYyyy) {
+      // Ставим в input "yyyy-mm-dd"
+      const iso = formatToYyyyMmDd(ddMmYyyy);
+      modalDeadlineInput.value = iso;
+      deadlineText.textContent = "До " + ddMmYyyy;
+    } else {
+      // Если нет даты, сбросим:
+      modalDeadlineInput.value = "";
+      deadlineText.textContent = "До ...";
+    }
   });
 }
 
 /**
  * Загрузка всех задач (GET /api/tasks/).
- * Затем вызываем displayTask для каждой.
  */
 function loadTasks() {
   fetch(baseURL + "/", {
@@ -202,7 +236,6 @@ function loadTasks() {
     })
     .then((tasks) => {
       // Очищаем контейнер, чтобы не было дублирования
-      // Если модалка лежит внутри .cards, она тоже сотрётся.
       cardsContainer.innerHTML = "";
 
       tasks.forEach((task) => {
@@ -215,28 +248,33 @@ function loadTasks() {
 }
 
 /**
- * Обработка "Сохранить" (кнопка в модалке).
- * Если editingCard != null → Редактируем задачу (title, content, deadline).
- * Иначе → Создаём новую задачу.
- * Обратите внимание, что is_completed тут не трогаем:
- * чекбокс обновляется напрямую на карточке (см. выше).
+ * Обработка "Сохранить" (иконка в модалке).
  */
 function handleSaveTask() {
   const title = modalTitleInput.value.trim();
   const content = modalContentInput.value.trim();
-  const deadline = modalDeadlineInput.value.trim();
+
+  // modalDeadlineInput.value = "yyyy-mm-dd" (или пусто)
+  const isoDate = modalDeadlineInput.value.trim();
+  const deadlineFormatted = isoDate ? formatToDdMmYyyy(isoDate) : "";
 
   if (editingCard) {
     // Редактируем существующую задачу
     const cardId = editingCard.dataset.id;
-    const updatedTask = { title, content, deadline };
+    const updatedTask = {
+      title,
+      content,
+      deadline: deadlineFormatted, // "dd.mm.yyyy"
+    };
 
     // Обновим карточку в DOM
     editingCard.dataset.title = title;
     editingCard.dataset.content = content;
-    editingCard.dataset.deadline = deadline;
+    editingCard.dataset.deadline = deadlineFormatted;
     editingCard.querySelector(".card__title").textContent = title;
-    editingCard.querySelector(".card__deadline").textContent = `До ${deadline}`;
+    editingCard.querySelector(
+      ".card__deadline"
+    ).textContent = `До ${deadlineFormatted}`;
 
     fetch(`${baseURL}/${cardId}/update`, {
       method: "PUT",
@@ -265,8 +303,12 @@ function handleSaveTask() {
     modal.style.display = "none";
     clearModalFields();
   } else {
-    // Создаём новую задачу (по умолчанию is_completed = false на сервере)
-    const newTask = { title, content, deadline };
+    // Создаём новую задачу (по умолчанию is_completed = false)
+    const newTask = {
+      title,
+      content,
+      deadline: deadlineFormatted, // "dd.mm.yyyy"
+    };
 
     fetch(baseURL + "/create", {
       method: "POST",
@@ -298,7 +340,6 @@ function handleSaveTask() {
 }
 
 // Функция для загрузки никнейма
-
 function loadUser() {
   fetch("http://127.0.0.1:8000/api/user/profile", {
     method: "GET",
@@ -411,4 +452,18 @@ window.addEventListener("DOMContentLoaded", () => {
   // Загружаем задачи и никнейм при старте
   loadUser();
   loadTasks();
+
+  // Дополнительно: подписываемся на change, чтобы сразу менялся текст «До ...»
+  // при выборе даты в модалке (без сохранения).
+  if (modalDeadlineInput && deadlineText) {
+    modalDeadlineInput.addEventListener("change", () => {
+      const iso = modalDeadlineInput.value; // "yyyy-mm-dd"
+      if (!iso) {
+        deadlineText.textContent = "До ...";
+      } else {
+        deadlineText.textContent = "До " + formatToDdMmYyyy(iso);
+      }
+    });
+  }
 });
+
