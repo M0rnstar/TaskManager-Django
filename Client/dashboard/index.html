@@ -15,6 +15,7 @@
           </div>
           <div class="header__title">Task Management System</div>
         </div>
+
         <div class="header__center">
           <div class="add-task" id="addTask">Добавить задачу</div>
           <div class="header__navbar">
@@ -25,6 +26,7 @@
             </ul>
           </div>
         </div>
+
         <div class="header__right">
           <div class="user-container">
             <div class="user-info">
@@ -53,36 +55,82 @@
           </div>
         </div>
       </header>
+
       <main>
         <div class="cards"></div>
+
+        <!-- -------------- Новый вариант модального окна ---------------->
         <div class="task-modal" id="taskModal">
           <div class="modal-content">
-            <span class="close">&times;</span>
-            <label for="modalTitle">Название:</label>
-            <input
-              type="text"
-              id="modalTitle"
-              placeholder="Введите название"
-              style="width: 100%; margin-bottom: 10px"
-            />
-            <label for="modalContent">Текст:</label>
-            <textarea
-              id="modalContent"
-              rows="4"
-              placeholder="Введите содержание"
-              style="width: 100%; resize: none"
-            ></textarea>
-            <label for="modalDeadline">Дедлайн:</label>
-            <input
-              type="date"
-              id="modalDeadline"
-              style="width: 100%; margin-bottom: 10px"
-            />
-            <button id="submitModal">Сохранить</button>
+            <div class="modal-container">
+              <!-- Шапка: дата (До …) + иконка сохранения и крестик -->
+              <div class="modal-header">
+                <div class="modal-deadline">
+                  <!-- Иконка календаря -->
+                  <img
+                    src="img/calendar.svg"
+                    alt="calendar-icon"
+                    class="calendar-icon"
+                  />
+
+                  <!-- Текстовая дата (по умолчанию), через JS подменяем -->
+                  <span id="deadlineText">До 01.01.2025</span>
+
+                  <!-- Реальное поле для выбора даты (прячем стилями) -->
+                  <input
+                    type="date"
+                    id="modalDeadline"
+                    class="date-input-hidden"
+                    value="2025-01-01"
+                    onkeydown="return false"
+                    onclick="this.showPicker()"
+                  />
+                </div>
+
+                <div class="modal-icons">
+                  <!-- Иконка сохранения (id="submitModal", чтобы JS продолжал работать) -->
+                  <img
+                    src="img/save.svg"
+                    alt="Save"
+                    class="icon-save"
+                    id="submitModal"
+                  />
+                  <!-- Иконка-крестик (класс .close нужен скрипту) -->
+                  <span class="close">&times;</span>
+                </div>
+              </div>
+
+              <!-- Основная часть -->
+              <div class="modal-body">
+                <!-- Единая «рамка» для заголовка и описания -->
+                <div class="task-box">
+                  <div class="task-box-header">
+                    <input
+                      type="text"
+                      class="task-title"
+                      id="modalTitle"
+                      placeholder="Введите название задачи"
+                    />
+                    <div class="editor-toolbar">
+                      <button class="btn-bold">B</button>
+                      <button class="btn-italic">I</button>
+                    </div>
+                  </div>
+                  <textarea
+                    class="task-description"
+                    id="modalContent"
+                    placeholder="Введите описание задачи"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <!-- -------------- Конец нового модального окна ---------------->
       </main>
     </div>
+
+    <!-- Подключаем JS -->
     <script src="main.js"></script>
     <script src="utils.js"></script>
   </body>
