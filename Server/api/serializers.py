@@ -13,7 +13,9 @@ class UserSerialzer(serializers.ModelSerializer):
         return user
     
 class TaskSerializer(serializers.ModelSerializer):
-    deadline = serializers.DateTimeField(format="%d.%m.%Y") # type: ignore
+    deadline = serializers.DateTimeField(
+        input_formats=["%d.%m.%Y", "%Y-%m-%d"],  # Допускаем оба формата
+        format="%d.%m.%Y") # type: ignore
 
     class Meta:
         model = Task
